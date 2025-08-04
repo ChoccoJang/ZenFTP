@@ -7,7 +7,8 @@
   "publisher": "choccojang",
   "pricing": "Free",
   "engines": {
-    "vscode": "^1.70.0"
+    "vscode": "^1.70.0",
+    "node": ">=14.0.0"
   },
   "categories": [
     "Other",
