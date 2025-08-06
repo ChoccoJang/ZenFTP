@@ -4,7 +4,7 @@
   "description": "Remote file editor for FTP/SFTP in VS Code.",
   "version": "1.0.0",
   "license": "MIT",
-  "publisher": "choccojang",
+  "publisher": "ChoccoJang",
   "pricing": "Free",
   "engines": {
     "vscode": "^1.70.0",
