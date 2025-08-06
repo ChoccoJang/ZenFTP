@@ -20,7 +20,7 @@ function activate(context) {
         vscode.commands.registerCommand('ZenFTP.connectServer', (serverNode) => fileProvider.connect(serverNode)),
         vscode.commands.registerCommand('ZenFTP.refreshServers', () => serverProvider.refresh()),
         vscode.commands.registerCommand('ZenFTP.addServer', () => serverProvider.addServer(context)),
-        vscode.commands.registerCommand('ZenFTP.editServer', (node) => serverProvider.editServer(node)),
+        vscode.commands.registerCommand('ZenFTP.editServer', (node) => serverProvider.editServer(context, node)),
         vscode.commands.registerCommand('ZenFTP.removeServer', (node) => serverProvider.removeServer(node)),
         vscode.commands.registerCommand('ZenFTP.disconnectServer', (serverNode) => fileProvider.disconnectServer(serverNode)),
 
@@ -31,12 +31,10 @@ function activate(context) {
         vscode.commands.registerCommand('ZenFTP.rename', (node) => fileProvider.rename(node)),
         vscode.commands.registerCommand('ZenFTP.delete', (node) => fileProvider.delete(node)),
         vscode.commands.registerCommand('ZenFTP.refreshFiles', () => fileProvider.refresh()),
-
-        // 워크스페이스 전역 이벤트 트리거
-        // vscode.workspace.onDidSaveTextDocument(async (savedDoc) => {
-        //     fileProvider.saveFile(savedDoc)
-        // })
     )
+
+    // 최초 서버 리스트 로드
+    serverProvider.refresh()
 }
 
 function deactivate() {}

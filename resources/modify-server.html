@@ -183,7 +183,7 @@
             <input id="rootPath" name="rootPath" value="/" />
 
             <div class="switch-row">
-                <label for="readOnly">Readonly</label>
+                <label for="readOnly">ReadOnly</label>
                 <label class="switch">
                 <input type="checkbox" name="readOnly" id="readOnly" />
                 <span class="slider"></span>
@@ -196,6 +196,27 @@
 
     <script>
         const vscode = acquireVsCodeApi()
+
+        // 초기 데이터 요청
+        vscode.postMessage({ type: 'init' })
+
+        // 메시지 리시버
+        window.addEventListener('message', event => {
+        const message = event.data
+        if (message.type === 'init' && message.value) {
+            const server = message.value
+            // --
+            document.querySelector('#name').value = server.name
+            document.querySelector('#host').value = server.host
+            document.querySelector('#port').value = server.port
+            document.querySelector('#protocol').value = server.protocol
+            document.querySelector('#username').value = server.username
+            document.querySelector('#password').value = server.password
+            document.querySelector('#rootPath').value = server.rootPath
+            document.querySelector('#readOnly').checked = !!server.readOnly
+        }
+        });
+
         document.getElementById('serverForm').addEventListener('submit', e => {
             e.preventDefault()
             const form = e.target;

@@ -21,6 +21,13 @@
   "icon": "resources/icon.png",
   "activationEvents": [],
   "contributes": {
+    "viewsWelcome": [
+        {
+            "view": "ZenFTPServers",
+            "contents": "Welcome to ZenFTP!\nIt looks like you haven't added any servers yet.\nClick below to set up your first remote connection.\n[Add a Server](command:ZenFTP.addServer)\nNeed help or want to contribute? Check out our [GitHub](https://github.com/ChoccoJang/ZenFTP).",
+            "when": "ZenFTP.hasNoServers"
+        }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -64,11 +71,13 @@
       {
         "command": "ZenFTP.removeServer",
         "title": "Remove Server",
+        "icon": "$(trash)",
         "category": "ZenFTP"
       },
       {
         "command": "ZenFTP.editServer",
         "title": "Edit Server",
+        "icon": "$(edit)",
         "category": "ZenFTP"
       },
       {
@@ -195,24 +204,19 @@
       ],
       "view/item/context": [
         {
-          "command": "ZenFTP.addServer",
-          "when": "view == ZenFTPServers",
-          "group": "navigation"
+          "command": "ZenFTP.disconnectServer",
+          "when": "view == ZenFTPServers && viewItem == server && ZenFTP.connected",
+          "group": "inline"
         },
         {
           "command": "ZenFTP.editServer",
-          "when": "view == ZenFTPServers && viewItem == server",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.disconnectServer",
-          "when": "view == ZenFTPServers && viewItem == server && ZenFTP.connected",
-          "group": "navigation"
+          "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
+          "group": "inline"
         },
         {
           "command": "ZenFTP.removeServer",
-          "when": "view == ZenFTPServers && viewItem == server",
-          "group": "navigation"
+          "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
+          "group": "inline"
         },
         {
           "command": "ZenFTP.addFolder",

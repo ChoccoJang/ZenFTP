@@ -9,16 +9,16 @@ class Logger {
     }
 
     debug(message) {
-        console.debug(message)
+        this.output.appendLine(`[DEBUG] ${message}`)
     }
 
     info(message) {
-        this.debug(message)
+        this.output.appendLine(`[INFO] ${message}`)
         vscode.window.showInformationMessage(message)
     }
 
     error(message, e) {
-        this.debug(e)
+        this.output.appendLine(`[ERROR] ${message}`)
         vscode.window.showErrorMessage(message)
     }
 }
