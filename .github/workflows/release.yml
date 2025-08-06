@@ -41,7 +41,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: "ZenFTP v${{ github.ref_name }}"
+          name: "ZenFTP ${{ github.ref_name }}"
           tag_name: ${{ github.ref_name }}
           body: ${{ steps.changelog.outputs.changelog }}
           files: "*.vsix"
