@@ -11,11 +11,16 @@
     "node": ">=14.0.0"
   },
   "categories": [
-    "Other",
-    "Remote",
-    "FTP",
-    "SFTP",
-    "EDITOR"
+    "Other"
+  ],
+  "keywords": [
+    "ftp",
+    "sftp",
+    "ftps",
+    "tls",
+    "remote",
+    "download",
+    "upload"
   ],
   "repository": {
     "type": "git",
