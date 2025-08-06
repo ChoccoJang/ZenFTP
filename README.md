@@ -39,7 +39,7 @@
 ## 🚀 Getting Started
 
 1. Open the command palette (⇧⌘P or Ctrl+Shift+P)
-2. Search for `Zenya: Add Server`
+2. Search for `ZenFTP: Add Server`
 3. Connect via FTP or SFTP
 4. Browse and edit remote files instantly
 
