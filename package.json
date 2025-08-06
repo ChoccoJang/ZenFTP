@@ -17,6 +17,14 @@
     "SFTP",
     "EDITOR"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChoccoJang/ZenFTP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ChoccoJang/ZenFTP/issues"
+  },
+  "homepage": "https://github.com/ChoccoJang/ZenFTP#readme",
   "main": "src/app.js",
   "icon": "resources/icon.png",
   "activationEvents": [],
