@@ -10,12 +10,6 @@
     Remote file editor for FTP/SFTP in Visual Studio Code.
 </p>
 
-<p align="center">
-  <a href="https://github.com/ChoccoJang/ZenFTP">
-    <img src="https://img.shields.io/github/stars/ChoccoJang/ZenFTP?style=social" alt="GitHub stars" />
-  </a>
-</p>
-
 ---
 
 ## ✨ Features
@@ -68,7 +62,7 @@
 You can configure servers via `settings.json`:
 
 ```jsonc
-"zenyaEditRemote.servers": [
+"ZenFTP.servers": [
   {
     "name": "My Server",
     "host": "ftp.example.com",
