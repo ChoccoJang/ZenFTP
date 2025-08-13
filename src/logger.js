@@ -8,17 +8,36 @@ class Logger {
         this.output = vscode.window.createOutputChannel('ZenFTP')
     }
 
-    debug(message) {
-        this.output.appendLine(`[DEBUG] ${message}`)
+    init() {
+        const config = vscode.workspace.getConfiguration('ZenFTP')
+        const logLevel = config.get('logLevel', 'INFO').toUpperCase()
+
+        // 지정한 것만
+        if (['DEBUG', 'INFO', 'ERROR'].includes(logLevel)) {
+            this.logLevel = logLevel
+        }
     }
 
-    info(message) {
-        this.output.appendLine(`[INFO] ${message}`)
-        vscode.window.showInformationMessage(message)
+    debug(...args) {
+        this.init()
+        if (this.logLevel === 'DEBUG') {
+            this.output.appendLine(`[DEBUG] ${args.join(' ')}`);
+        }
     }
 
-    error(message, e) {
-        this.output.appendLine(`[ERROR] ${message}`)
+    info(...args) {
+        this.init()
+        if (['DEBUG', 'INFO'].includes(this.logLevel)) {
+            const message = `[INFO] ${args.join(' ')}`
+            this.output.appendLine(message)
+            vscode.window.showInformationMessage(message)
+        }
+    }
+
+    error(...args) {
+        this.init()
+        const message = `[ERROR] ${args.join(' ')}`
+        this.output.appendLine(message)
         vscode.window.showErrorMessage(message)
     }
 }

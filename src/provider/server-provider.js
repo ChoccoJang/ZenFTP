@@ -29,43 +29,6 @@ class ServerProvider {
         this.eventEmitter.fire()
     }
 
-    // 트리 아이템 처리
-    getTreeItem(element) {
-        const item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.None);
-        Object.assign(item, element)
-        return item
-    }
-
-    // 트리 리스트 처리
-    getChildren() {
-        // 서버가 하나도 없을 경우
-        // if (this.servers.length === 0) {
-        //     return [
-        //         {
-        //             label: '서버가 없습니다. 여기서 우클릭하여 추가하세요.',
-        //             contextValue: 'server-empty',
-        //             icon: 'add',
-        //         }
-        //     ]
-        // }
-
-        //
-        return this.servers.map(server => {
-            return ({
-                label: server.name,
-                description: `${server.host}:${server.port || 21}`,
-                config: server,
-                contextValue: 'server',
-                iconPath: new vscode.ThemeIcon('globe'),
-                command: {
-                    command: 'ZenFTP.connectServer',
-                    title: 'Connect to Server',
-                    arguments: [{ label: server.name, config: server }]
-                }
-            })
-        })
-    }
-
     // 서버 추가
     async addServer(context) {
 
@@ -82,7 +45,7 @@ class ServerProvider {
         )
 
         // html
-        const htmlPath = path.join(context.extensionPath, 'resources', 'add-server.html')
+        const htmlPath = path.join(context.extensionPath, 'resources', 'html/add-server.html')
         let htmlContent = fs.readFileSync(htmlPath, 'utf-8')
         // ${logoUri} 실제 URI로 대체
         htmlContent = htmlContent.replace(/\${logoUri}/g, logoUri.toString())
@@ -141,7 +104,7 @@ class ServerProvider {
         )
 
         // html
-        const htmlPath = path.join(context.extensionPath, 'resources', 'modify-server.html')
+        const htmlPath = path.join(context.extensionPath, 'resources', 'html/modify-server.html')
         let htmlContent = fs.readFileSync(htmlPath, 'utf-8')
         // ${logoUri} 실제 URI로 대체
         htmlContent = htmlContent.replace(/\${logoUri}/g, logoUri.toString())
@@ -165,6 +128,43 @@ class ServerProvider {
         })
 
         panel.webview.onDidReceiveMessage({ type: 'init' })
+    }
+
+    // 트리 아이템 처리
+    getTreeItem(element) {
+        const item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.None);
+        Object.assign(item, element)
+        return item
+    }
+
+    // 트리 리스트 처리
+    getChildren() {
+        // 서버가 하나도 없을 경우
+        // if (this.servers.length === 0) {
+        //     return [
+        //         {
+        //             label: '서버가 없습니다. 여기서 우클릭하여 추가하세요.',
+        //             contextValue: 'server-empty',
+        //             icon: 'add',
+        //         }
+        //     ]
+        // }
+
+        //
+        return this.servers.map(server => {
+            return ({
+                label: server.name,
+                description: `${server.host}:${server.port || 21}`,
+                config: server,
+                contextValue: 'server',
+                iconPath: new vscode.ThemeIcon('globe'),
+                command: {
+                    command: 'ZenFTP.connectServer',
+                    title: 'Connect to Server',
+                    arguments: [{ label: server.name, config: server }]
+                }
+            })
+        })
     }
 }
 

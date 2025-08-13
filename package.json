@@ -1,261 +1,291 @@
 {
-  "name": "ZenFTP",
-  "displayName": "ZenFTP",
-  "description": "Remote file editor for FTP/SFTP in VS Code.",
-  "version": "1.0.0",
-  "license": "MIT",
-  "publisher": "ChoccoJang",
-  "pricing": "Free",
-  "engines": {
-    "vscode": "^1.70.0",
-    "node": ">=14.0.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "ftp",
-    "sftp",
-    "ftps",
-    "tls",
-    "remote",
-    "download",
-    "upload"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ChoccoJang/ZenFTP.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ChoccoJang/ZenFTP/issues"
-  },
-  "homepage": "https://github.com/ChoccoJang/ZenFTP#readme",
-  "main": "src/app.js",
-  "icon": "resources/icon.png",
-  "activationEvents": [],
-  "contributes": {
-    "viewsWelcome": [
-        {
-            "view": "ZenFTPServers",
-            "contents": "Welcome to ZenFTP!\nIt looks like you haven't added any servers yet.\nClick below to set up your first remote connection.\n[Add a Server](command:ZenFTP.addServer)\nNeed help or want to contribute? Check out our [GitHub](https://github.com/ChoccoJang/ZenFTP).",
-            "when": "ZenFTP.hasNoServers"
-        }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "ZenFTP",
-          "title": "ZenFTP",
-          "icon": "resources/icon.svg"
-        }
-      ]
+    "name": "ZenFTP",
+    "displayName": "ZenFTP",
+    "description": "Remote file editor for FTP/SFTP in VS Code.",
+    "version": "1.0.0",
+    "license": "MIT",
+    "publisher": "ChoccoJang",
+    "pricing": "Free",
+    "engines": {
+        "vscode": "^1.70.0",
+        "node": ">=14.0.0"
     },
-    "views": {
-      "ZenFTP": [
-        {
-          "id": "ZenFTPServers",
-          "name": "Servers"
-        },
-        {
-          "id": "ZenFTPFiles",
-          "name": "Files"
-        }
-      ]
-    },
-    "commands": [
-      {
-        "command": "ZenFTP.connectServer",
-        "title": "Connect to Server",
-        "icon": "$(plug)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.disconnectServer",
-        "title": "Disconnect to Server",
-        "icon": "$(debug-disconnect)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.addServer",
-        "title": "Add Server",
-        "icon": "$(add)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.removeServer",
-        "title": "Remove Server",
-        "icon": "$(trash)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.editServer",
-        "title": "Edit Server",
-        "icon": "$(edit)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.openFile",
-        "title": "Open File",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.addFile",
-        "title": "Add File",
-        "icon": "$(new-file)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.addFolder",
-        "title": "Add Folder",
-        "icon": "$(new-folder)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.rename",
-        "title": "Rename",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.delete",
-        "title": "Delete",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.refreshServers",
-        "title": "Refresh Servers",
-        "icon": "$(refresh)",
-        "category": "ZenFTP"
-      },
-      {
-        "command": "ZenFTP.refreshFiles",
-        "title": "Refresh Files and Folders",
-        "icon": "$(refresh)",
-        "category": "ZenFTP"
-      }
+    "categories": [
+        "Other"
     ],
-    "configuration": {
-      "type": "object",
-      "title": "ZenFTP Settings",
-      "properties": {
-        "ZenFTP.servers": {
-          "type": "array",
-          "description": "List of remote servers for ZenFTP.",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "host": {
-                "type": "string"
-              },
-              "port": {
-                "type": "number"
-              },
-              "protocol": {
-                "type": "string",
-                "enum": [
-                  "ftp",
-                  "sftp"
-                ]
-              },
-              "username": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
-              },
-              "rootPath": {
-                "type": "string"
-              },
-              "readOnly": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "name",
-              "host",
-              "username",
-              "password"
+    "keywords": [
+        "ftp",
+        "sftp",
+        "ftps",
+        "tls",
+        "remote",
+        "download",
+        "upload"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ChoccoJang/ZenFTP.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ChoccoJang/ZenFTP/issues"
+    },
+    "homepage": "https://github.com/ChoccoJang/ZenFTP#readme",
+    "main": "src/app.js",
+    "icon": "resources/icon.png",
+    "activationEvents": [
+        "onView:ZenFTPFiles",
+        "onView:ZenFTPServers",
+        "onCommand:ZenFTP.rename",
+        "onCommand:ZenFTP.delete"
+    ],
+    "contributes": {
+        "viewsWelcome": [
+            {
+                "view": "ZenFTPServers",
+                "contents": "Welcome to ZenFTP!\nIt looks like you haven't added any servers yet.\nClick below to set up your first remote connection.\n[Add a Server](command:ZenFTP.addServer)\nNeed help or want to contribute? Check out our [GitHub](https://github.com/ChoccoJang/ZenFTP).",
+                "when": "ZenFTP.hasNoServers"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "ZenFTP",
+                    "title": "ZenFTP",
+                    "icon": "resources/icon.svg"
+                }
             ]
-          }
+        },
+        "views": {
+            "ZenFTP": [
+                {
+                    "id": "ZenFTPServers",
+                    "name": "Servers"
+                },
+                {
+                    "id": "ZenFTPFiles",
+                    "name": "Files"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "ZenFTP.connectServer",
+                "title": "Connect to Server",
+                "icon": "$(plug)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.disconnectServer",
+                "title": "Disconnect to Server",
+                "icon": "$(debug-disconnect)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.addServer",
+                "title": "Add Server",
+                "icon": "$(add)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.removeServer",
+                "title": "Remove Server",
+                "icon": "$(trash)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.editServer",
+                "title": "Edit Server",
+                "icon": "$(edit)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.openFile",
+                "title": "Open File",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.addFile",
+                "title": "Add File",
+                "icon": "$(new-file)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.addFolder",
+                "title": "Add Folder",
+                "icon": "$(new-folder)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.rename",
+                "title": "Rename",
+                "icon": "$(edit)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.delete",
+                "title": "Delete",
+                "icon": "$(trash)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.upload",
+                "title": "Upload Files or Folders",
+                "icon": "$(cloud-upload)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.refreshServers",
+                "title": "Refresh Servers",
+                "icon": "$(refresh)",
+                "category": "ZenFTP"
+            },
+            {
+                "command": "ZenFTP.refreshFiles",
+                "title": "Refresh Files and Folders",
+                "icon": "$(refresh)",
+                "category": "ZenFTP"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "ZenFTP.rename",
+                "key": "f2",
+                "mac": "f2",
+                "when": "focusedView == ZenFTPFiles"
+            },
+            {
+                "command": "ZenFTP.delete",
+                "key": "delete",
+                "mac": "delete",
+                "when": "focusedView == ZenFTPFiles"
+
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "ZenFTP",
+            "properties": {
+                "ZenFTP.logLevel": {
+                    "type": "string",
+                    "default": "INFO",
+                    "enum": ["DEBUG", "INFO", "ERROR"],
+                    "description": "ZenFTP 확장의 로그 출력 레벨을 설정합니다.",
+                    "scope": "application"
+                },
+                "ZenFTP.servers": {
+                    "type": "array",
+                    "description": "ZenFTP에서 사용할 원격 서버 목록입니다.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "host": {
+                            "type": "string"
+                        },
+                        "port": {
+                            "type": "number"
+                        },
+                        "protocol": {
+                            "type": "string",
+                            "enum": [
+                                "ftp",
+                                "sftp"
+                            ]
+                        },
+                        "username": {
+                            "type": "string"
+                        },
+                        "password": {
+                            "type": "string"
+                        },
+                        "rootPath": {
+                            "type": "string"
+                        },
+                        "readOnly": {
+                            "type": "boolean"
+                        }
+                        },
+                        "required": [
+                            "name",
+                            "host",
+                            "username",
+                            "password"
+                        ]
+                    }
+                }
+            }
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "ZenFTP.addServer",
+                    "when": "view == ZenFTPServers",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "ZenFTP.refreshServers",
+                    "when": "view == ZenFTPServers",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "ZenFTP.disconnectServer",
+                    "when": "view == ZenFTPServers && ZenFTP.connected",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "ZenFTP.addFile",
+                    "when": "view == ZenFTPFiles && ZenFTP.connected",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "ZenFTP.addFolder",
+                    "when": "view == ZenFTPFiles && ZenFTP.connected",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "ZenFTP.upload",
+                    "when": "view == ZenFTPFiles && ZenFTP.connected",
+                    "group": "navigation@3"
+                },
+                {
+                    "command": "ZenFTP.refreshFiles",
+                    "when": "view == ZenFTPFiles && ZenFTP.connected",
+                    "group": "navigation@4"
+                    }
+            ],
+            "view/item/context": [
+                {
+                    "command": "ZenFTP.editServer",
+                    "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "ZenFTP.removeServer",
+                    "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "ZenFTP.rename",
+                    "when": "view == ZenFTPFiles && viewItem",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "ZenFTP.upload",
+                    "when": "view == ZenFTPFiles && viewItem && viewItem == folder",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "ZenFTP.delete",
+                    "when": "view == ZenFTPFiles && viewItem",
+                    "group": "inline@3"
+                }
+            ]
         }
-      }
     },
-    "menus": {
-      "view/title": [
-        {
-          "command": "ZenFTP.addServer",
-          "when": "view == ZenFTPServers",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.refreshServers",
-          "when": "view == ZenFTPServers",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.disconnectServer",
-          "when": "view == ZenFTPServers && ZenFTP.connected",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.addFile",
-          "when": "view == ZenFTPFiles && ZenFTP.connected",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.addFolder",
-          "when": "view == ZenFTPFiles && ZenFTP.connected",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.refreshFiles",
-          "when": "view == ZenFTPFiles && ZenFTP.connected",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "ZenFTP.disconnectServer",
-          "when": "view == ZenFTPServers && viewItem == server && ZenFTP.connected",
-          "group": "inline"
-        },
-        {
-          "command": "ZenFTP.editServer",
-          "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
-          "group": "inline"
-        },
-        {
-          "command": "ZenFTP.removeServer",
-          "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
-          "group": "inline"
-        },
-        {
-          "command": "ZenFTP.addFolder",
-          "when": "view == ZenFTPFiles",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.addFile",
-          "when": "view == ZenFTPFiles",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.rename",
-          "when": "view == ZenFTPFiles && viewItem",
-          "group": "navigation"
-        },
-        {
-          "command": "ZenFTP.delete",
-          "when": "view == ZenFTPFiles && viewItem",
-          "group": "navigation"
-        }
-      ]
+    "dependencies": {
+        "ssh2-sftp-client": "^9.0.4",
+        "basic-ftp": "^5.0.2"
     }
-  },
-  "dependencies": {
-    "ssh2-sftp-client": "^9.0.4",
-    "basic-ftp": "^5.0.2"
-  }
-}
+    }

@@ -1,22 +1,9 @@
-# ZenFTP
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/ChoccoJang/ZenFTP/main/resources/icon.png" width="128" alt="ZenFTP" />
-</p>
-
-<h1 align="center">Zen FTP</h1>
-
-<p align="center">
-    Remote file editor for FTP/SFTP in Visual Studio Code.
-</p>
-
----
-
 ## ✨ Features
 
 * 🔍 Full remote file tree view (FTP / SFTP)
 * 📡 Seamless remote file editing
 * 💾 Auto-upload on save *(unless in read-only mode)*
+* ⬆️ Manual file/folder upload via drag & drop or context menu
 * 🔒 Read-only mode supported
 * ⚡️ Fast and lightweight – no need for full remote workspace
 * 🧠 VS Code theme icon integration
@@ -52,6 +39,7 @@
 | `ZenFTP.addFolder`          | Create folder              |
 | `ZenFTP.addFile`            | Create file                |
 | `ZenFTP.openFile`           | Open file in editor        |
+| `ZenFTP.upload`             | Upload file or folder      |
 
 > Full command list is available via Command Palette or context menu.
 

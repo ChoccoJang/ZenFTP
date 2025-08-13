@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>ZenFTP 업로드</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            color-scheme: light dark;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--vscode-editor-background);
+            color: var(--vscode-foreground);
+            margin: 0;
+            padding: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background-color: var(--vscode-editorWidget-background);
+            border: 1px solid var(--vscode-panel-border);
+            border-radius: 12px;
+            width: 460px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        }
+        h2 {
+            margin-bottom: 1rem;
+        }
+        #dropZone {
+            border: 2px dashed var(--vscode-descriptionForeground);
+            border-radius: 10px;
+            padding: 2rem;
+            color: var(--vscode-descriptionForeground);
+            font-size: 15px;
+            cursor: pointer;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        #dropZone.dragover {
+            background-color: var(--vscode-editor-hoverHighlightBackground);
+            border-color: var(--vscode-editorHoverWidget-border);
+        }
+        .status {
+            margin-top: 1rem;
+            font-size: 13px;
+            color: var(--vscode-descriptionForeground);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Drag & Drop Files or Folders</h2>
+        <div id="dropZone">
+            📁 Drag and drop files or folders here<br />
+            <span style="font-size: 13px; color: var(--vscode-descriptionForeground);">
+                (To upload a folder with its structure, hold the <strong>Shift</strong> key while dragging)
+            </span>
+        </div>
+        <div class="status" id="statusText">Folder structure will be preserved during upload.</div>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi()
+        const dropZone = document.getElementById('dropZone')
+        const statusText = document.getElementById('statusText')
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault()
+            dropZone.classList.add('dragover')
+        })
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover')
+        })
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault()
+            dropZone.classList.remove('dragover')
+
+            const items = [...e.dataTransfer.items]
+            if (!items.length) return
+
+            statusText.textContent = 'Preparing upload...'
+
+            for (const item of items) {
+                const entry = item.webkitGetAsEntry?.()
+                if (entry) {
+                    await traverseEntry(entry, '')
+                }
+            }
+
+            statusText.textContent = 'Upload request sent!'
+        })
+
+        async function traverseEntry(entry, pathPrefix) {
+            if (entry.isFile) {
+                const file = entry.file(async (file) => {
+                    const arrayBuffer = await file.arrayBuffer()
+                    const content = new Uint8Array(arrayBuffer)
+
+                    vscode.postMessage({
+                        type: 'upload',
+                        name: file.name,
+                        path: pathPrefix,
+                        isDirectory: false,
+                        content,
+                    }, [content.buffer])
+                })
+
+            } else if (entry.isDirectory) {
+                // 먼저 디렉토리 생성 메시지 전송
+                vscode.postMessage({
+                    type: 'upload',
+                    name: entry.name,
+                    path: pathPrefix,
+                    isDirectory: true,
+                })
+
+                const reader = entry.createReader()
+                const entries = await new Promise((resolve) => reader.readEntries(resolve))
+
+                // 폴더 우선 정렬
+                entries.sort((a, b) => {
+                    if (a.isDirectory && !b.isDirectory) return -1
+                    if (!a.isDirectory && b.isDirectory) return 1
+                    return a.name.localeCompare(b.name)
+                })
+
+                for (const subEntry of entries) {
+                    setTimeout(async () => {
+                        await traverseEntry(subEntry, pathPrefix + entry.name + '/')
+                    }, 100)
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,32 +1,49 @@
-# Changelog
+# 변경 이력 (Changelog)
 
-All notable changes to **ZenFTP** will be documented in this file.
+ZenFTP의 모든 주요 변경 사항은 이 문서에 기록됩니다.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/).
+이 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.0.0/)을 기반으로 하며,
+본 프로젝트는 [Semantic Versioning](https://semver.org/lang/ko/)을 따릅니다.
+
+---
+
+## [1.0.1] - 2025-08-13
+
+### 추가됨
+- 로그 레벨 설정(`ZenFTP.logLevel`) 기능 추가
+- 파일 및 폴더 업로드 명령(`ZenFTP.upload`) 추가
+- 드래그 앤 드롭 기반 업로드 WebView 구현
+- 폴더 구조를 유지한 업로드 기능 지원
+- 이름변경(F2), 삭제(Delete) 단축키 설정 추가
+
+### 변경됨
+- 컨텍스트 메뉴 순서 수정
+- `README.md`의 명령어 목록 및 기능 설명, 상단 영역 수정
+
+### 수정됨
+- 폴더 생성 반영 안되는 오류 개선
 
 ---
 
 ## [1.0.0] - 2025-08-06
 
-### Added
-- Initial public release of ZenFTP (Zenya EditRemote)
-- FTP / SFTP remote file browsing support
-- Auto-upload on save (except in read-only mode)
-- Read-only mode toggle
-- Server add/edit/remove with persistent settings
-- Context menu and command palette integration
-- Custom sidebar with dual views: Servers & Files
-- File/folder create, rename, delete functionality
-- Welcome view when no server is configured
-- GitHub star badge and VS Code-style icon support
-- README with logo, screenshot, and command list
+### 추가됨
+- ZenFTP(구 Zenya EditRemote) 첫 공식 릴리스
+- FTP / SFTP 원격 파일 탐색 기능
+- 저장 시 자동 업로드 (읽기 전용 모드 제외)
+- 읽기 전용 모드 전환 기능
+- 서버 추가/수정/삭제 및 설정 파일 연동
+- 커맨드 팔레트 및 마우스 우클릭 메뉴 연동
+- 사이드바 분리 뷰 (서버 / 파일)
+- 파일 및 폴더 생성, 이름 변경, 삭제 기능
+- 서버 미설정 시 웰컴 뷰 제공
+- GitHub 스타 배지 및 VS Code 아이콘 스타일 지원
+- 로고, 스크린샷, 명령어 리스트 포함 README 작성
 
-### Changed
-- README.md restructured for clarity and developer appeal
+### 변경됨
+- `README.md` 전체 구조 개선 및 가독성 향상
 
-### Fixed
-- Improved error logging and WebView message handling
+### 수정됨
+- 오류 로그 및 WebView 메시지 처리 개선
 
 ---
-
