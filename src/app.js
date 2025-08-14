@@ -30,7 +30,7 @@ function activate(context) {
         vscode.commands.registerCommand('ZenFTP.refreshServers', () => serverProvider.refresh()),
         vscode.commands.registerCommand('ZenFTP.addServer', () => serverProvider.addServer(context)),
         vscode.commands.registerCommand('ZenFTP.editServer', (node) => serverProvider.editServer(context, node)),
-        vscode.commands.registerCommand('ZenFTP.removeServer', (node) => serverProvider.removeServer(node)),
+        vscode.commands.registerCommand('ZenFTP.deleteServer', (node) => serverProvider.removeServer(node)),
         vscode.commands.registerCommand('ZenFTP.disconnectServer', (serverNode) => fileProvider.disconnectServer(serverNode)),
 
         // -- 파일/폴더

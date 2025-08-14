@@ -1,0 +1,22 @@
+{
+    "view.server": "서버 목록",
+    "view.files": "파일/폴더 목록",
+
+    "command.addServer": "서버 추가",
+    "command.editServer": "서버 수정",
+    "command.deleteServer": "서버 삭제",
+    "command.connectServer": "서버 연결",
+    "command.disconnectServer": "서버 연결 해제",
+    "command.refreshServers": "서버 목록 새로고침",
+
+    "command.addFolder": "새 폴더 생성",
+    "command.addFile": "새 파일 생성",
+    "command.openFile": "파일 열기",
+    "command.renameFile": "파일 이름 변경",
+    "command.deleteFile": "파일 삭제",
+    "command.uploadFile": "파일 또는 폴더 업로드",
+    "command.refreshFiles": "파일 및 폴더 새로고침",
+
+    "setting.logLevel": "ZenFTP 확장의 로그 출력 레벨을 설정합니다.",
+    "setting.servers": "ZenFTP에서 사용할 원격 서버 목록입니다."
+}
