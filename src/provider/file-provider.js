@@ -444,7 +444,8 @@ class FileProvider {
     getHashFileName(fileName) {
         const orgFileName = path.basename(fileName)
         const hashFileName = crypto.createHash('md5').update(fileName + Date.now()).digest('hex') + path.extname(fileName)
-        return `${orgFileName}______${hashFileName}`
+        // return `${orgFileName}______${hashFileName}`
+        return `${hashFileName}`
     }
 
     // 읽기모드 체크 및 예외처리
