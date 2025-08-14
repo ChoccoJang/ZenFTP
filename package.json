@@ -2,7 +2,7 @@
     "name": "ZenFTP",
     "displayName": "ZenFTP",
     "description": "Remote file editor for FTP/SFTP in VS Code.",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "license": "MIT",
     "publisher": "ChoccoJang",
     "pricing": "Free",
