@@ -17,6 +17,10 @@ const i18n  = {
         en: 'Server deleted: {0}',
         ko: '서버 삭제됨: {0}',
     },
+    'server.connect.connecting': {
+        en: 'Connecting to server: {0}...',
+        ko: '서버에 연결 중: {0}...',
+    },
     'server.connect.success': {
         en: 'Connected to server: {0}',
         ko: '서버 연결 성공: {0}',
