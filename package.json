@@ -59,89 +59,89 @@
             "ZenFTP": [
                 {
                     "id": "ZenFTPServers",
-                    "name": "Servers"
+                    "name": "%view.server%"
                 },
                 {
                     "id": "ZenFTPFiles",
-                    "name": "Files"
+                    "name": "%view.files%"
                 }
             ]
         },
         "commands": [
             {
                 "command": "ZenFTP.connectServer",
-                "title": "Connect to Server",
+                "title": "%command.connectServer%",
                 "icon": "$(plug)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.disconnectServer",
-                "title": "Disconnect to Server",
+                "title": "%command.disconnectServer%",
                 "icon": "$(debug-disconnect)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.addServer",
-                "title": "Add Server",
+                "title": "%command.addServer%",
                 "icon": "$(add)",
                 "category": "ZenFTP"
             },
             {
-                "command": "ZenFTP.removeServer",
-                "title": "Remove Server",
+                "command": "ZenFTP.deleteServer",
+                "title": "%command.deleteServer%",
                 "icon": "$(trash)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.editServer",
-                "title": "Edit Server",
+                "title": "%command.editServer%",
                 "icon": "$(edit)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.openFile",
-                "title": "Open File",
+                "title": "%command.openFile%",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.addFile",
-                "title": "Add File",
+                "title": "%command.addFile%",
                 "icon": "$(new-file)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.addFolder",
-                "title": "Add Folder",
+                "title": "%command.addFolder%",
                 "icon": "$(new-folder)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.rename",
-                "title": "Rename",
+                "title": "%command.renameFile%",
                 "icon": "$(edit)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.delete",
-                "title": "Delete",
+                "title": "%command.deleteFile%",
                 "icon": "$(trash)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.upload",
-                "title": "Upload Files or Folders",
+                "title": "%command.uploadFile%",
                 "icon": "$(cloud-upload)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.refreshServers",
-                "title": "Refresh Servers",
+                "title": "%command.refreshServers%",
                 "icon": "$(refresh)",
                 "category": "ZenFTP"
             },
             {
                 "command": "ZenFTP.refreshFiles",
-                "title": "Refresh Files and Folders",
+                "title": "%command.refreshFiles%",
                 "icon": "$(refresh)",
                 "category": "ZenFTP"
             }
@@ -172,12 +172,12 @@
                         "INFO",
                         "ERROR"
                     ],
-                    "description": "ZenFTP 확장의 로그 출력 레벨을 설정합니다.",
+                    "description": "%setting.logLevel%",
                     "scope": "application"
                 },
                 "ZenFTP.servers": {
                     "type": "array",
-                    "description": "ZenFTP에서 사용할 원격 서버 목록입니다.",
+                    "description": "%setting.servers%",
                     "items": {
                         "type": "object",
                         "properties": {
@@ -265,7 +265,7 @@
                     "group": "inline@1"
                 },
                 {
-                    "command": "ZenFTP.removeServer",
+                    "command": "ZenFTP.deleteServer",
                     "when": "view == ZenFTPServers && viewItem == server && !ZenFTP.connected",
                     "group": "inline@2"
                 },

@@ -49,9 +49,9 @@ class FileProvider {
                         await this.client.uploadFrom(stream, realFileName)
                         stream.close()
                     }
-                    Logger.debug(`파일저장 성공: ${realFileName}`)
+                    Logger.debug(Logger.l('file.save.success', realFileName))
                 } catch (e) {
-                    Logger.error(`파일저장 실패: ${e.message}`, e)
+                    Logger.error(Logger.l('file.save.fail', e.message), e)
                 }
             })
         }
@@ -77,7 +77,7 @@ class FileProvider {
 
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window ,
-            title: `Connecting to ${serverNode.label}...`,
+            title: Logger.l('server.connect.connecting', serverNode.label),
             cancellable: false,
         }, async (progress) => {
 
@@ -103,11 +103,11 @@ class FileProvider {
                 }
                 this.connected = true
                 await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', true)
-                Logger.debug(`서버연결 성공: ${serverNode.label}`)
+                Logger.debug(Logger.l('server.connect.success', serverNode.label))
                 //
                 this.refresh()
             } catch (e) {
-                Logger.error(`서버연결 실패: ${e.message}`, e)
+                Logger.error(Logger.l('server.connect.fail', e.message), e)
             }
         })
     }
@@ -127,10 +127,10 @@ class FileProvider {
                 await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', false)
                 //
                 this.refresh()
-                Logger.debug(`서버종료 성공: ${serverNode.label}`)
+                Logger.debug(Logger.l('server.disconnect.success', serverNode.label))
             }
         } catch (e) {
-            Logger.error(`서버종료 실패: ${e.message}`, e)
+            Logger.error(Logger.l('server.disconnect.fail', e.message), e)
         }
     }
 
@@ -154,9 +154,9 @@ class FileProvider {
             await vscode.window.showTextDocument(doc)
             // 임시<->실제 파일명 저장
             this.tempFileMap.set(tempFiileName, fullPath)
-            Logger.debug(`파일열기 성공: ${fullPath}`)
+            Logger.debug(Logger.l('file.open.success', fullPath))
         } catch (e) {
-            Logger.error(`파일열기 실패: ${e.message}`, e)
+            Logger.error(Logger.l('file.open.fail', e.message), e)
         }
     }
 
@@ -165,14 +165,14 @@ class FileProvider {
         try {
             this.readOnly()
 
-            const name = await vscode.window.showInputBox({ prompt: '새 폴더 이름 입력' })
+            const name = await vscode.window.showInputBox({ prompt: Logger.l('folder.create.newName') })
             if (name) {
 
                 const basePath = this.getBasePath(node)
                 const fullPath = path.posix.join(basePath, name)
                 const exists = await this.fileExists(fullPath)
                 if (exists) {
-                    vscode.window.showWarningMessage(`이미 존재하는 폴더입니다: ${fullPath}`)
+                    vscode.window.showWarningMessage(Logger.l('folder.exists', fullPath))
                     return
                 }
                 //
@@ -181,11 +181,11 @@ class FileProvider {
                     await this.client.ensureDir(fullPath)
                 }
                 //
-                Logger.debug(`폴더생성 성공: ${fullPath}`)
+                Logger.debug(Logger.l('folder.create.success', fullPath))
                 this.refresh()
             }
         } catch (e) {
-            Logger.error(`폴더생성 실패: ${e.message}`, e)
+            Logger.error(Logger.l('folder.create.fail', e.message), e)
         }
     }
 
@@ -194,14 +194,14 @@ class FileProvider {
         try {
             this.readOnly()
 
-            const name = await vscode.window.showInputBox({ prompt: '새 파일 이름 입력' })
+            const name = await vscode.window.showInputBox({ prompt: Logger.l('file.create.newName') })
             if (!name) return
 
             const basePath = this.getBasePath(node)
             const fullPath = path.posix.join(basePath, name)
             const exists = await this.fileExists(fullPath)
             if (exists) {
-                vscode.window.showWarningMessage(`이미 존재하는 파일입니다: ${fullPath}`)
+                vscode.window.showWarningMessage(Logger.l('file.exists', fullPath))
                 return
             }
 
@@ -219,10 +219,10 @@ class FileProvider {
             const doc = await vscode.workspace.openTextDocument(tempFileName)
             await vscode.window.showTextDocument(doc, { preview: false })
             //
-            Logger.debug(`파일생성 성공: ${name}`)
+            Logger.debug(Logger.l('file.create.success', name))
             this.refresh()
         } catch (e) {
-            Logger.error(`파일생성 실패: ${e.message}`, e)
+            Logger.error(Logger.l('file.create.fail', e.message), e)
         }
     }
 
@@ -234,28 +234,31 @@ class FileProvider {
             // -- 대상 확인
             node = node || selectedFileNode
             if (!node) {
-                vscode.window.showWarningMessage('No file selected to rename.')
+                Logger.error(Logger.l('common.select.rename'))
                 return
             }
 
-            const newName = await vscode.window.showInputBox({ prompt: '새로운 이름', value: node.label })
+            // 파일인지 폴더인지 체크
+            const i18nFix = node.isDirectory ? 'folder' : 'file'
+
+            const newName = await vscode.window.showInputBox({ prompt: Logger.l(`${i18nFix}.rename.newName`), value: node.label })
             if (!newName || newName === node.label) return
 
             //
             const newPath = path.posix.join(path.posix.dirname(node.fullPath), newName)
             const exists = await this.fileExists(newPath)
             if (exists) {
-                vscode.window.showWarningMessage(`이미 존재하는 이름입니다: ${newPath}`)
+                vscode.window.showWarningMessage(Logger.l('name.exists', newPath))
                 return
             }
 
             if (this.protocol === 'sftp') await this.client.rename(node.fullPath, newPath)
             else if (this.protocol === 'ftp') await this.client.rename(node.fullPath, newPath)
             //
-            Logger.debug(`이름변경 성공: ${newName}`)
+            Logger.debug(Logger.l(`${i18nFix}.rename.success`, newName))
             this.refresh()
         } catch (e) {
-            Logger.error(`이름변경 실패: ${e.message}`, e)
+            Logger.error(Logger.l(`${i18nFix}.rename.fail`, e.message), e)
         }
     }
 
@@ -267,16 +270,19 @@ class FileProvider {
             // -- 대상 확인
             node = node || selectedFileNode
             if (!node) {
-                vscode.window.showWarningMessage('No file selected to delete.')
+                Logger.error(Logger.l('common.select.delete'))
                 return
             }
 
+            // 파일인지 폴더인지 체크
+            const i18nFix = node.isDirectory ? 'folder' : 'file'
+
             const confirm = await vscode.window.showWarningMessage(
-                `'${node.label}'을 삭제할까요? 이 작업은 취소할 수 없습니다.`,
+                Logger.l(`${i18nFix}.delete.confirm`, node.label),
                 { modal: true },
-                'Delete',
+                Logger.l('common.btn.delete'),
             )
-            if (confirm === 'Delete') {
+            if (confirm === Logger.l('common.btn.delete')) {
 
                 if (this.protocol === 'sftp') {
                     if (node.isDirectory) await this.client.rmdir(node.fullPath, true)
@@ -286,11 +292,11 @@ class FileProvider {
                     else await this.client.remove(node.fullPath)
                 }
                 //
-                Logger.debug(`삭제 완료: ${node.label}`)
+                Logger.debug(Logger.l(`${i18nFix}.delete.success`, node.label))
                 this.refresh()
             }
         } catch (e) {
-            Logger.error(`삭제 실패: ${e.message}`, e)
+            Logger.error(Logger.l(`${i18nFix}.delete.fail`, e.message), e)
         }
     }
 
@@ -326,7 +332,7 @@ class FileProvider {
                             else if (this.protocol === 'ftp') {
                                 await this.client.ensureDir(fullPath)
                             }
-                            Logger.debug(`업로드 폴더 완료: ${fullPath}`)
+                            Logger.debug(Logger.l('folder.upload.success', fullPath))
                         // 파일
                         } else {
                             // tempPath에 저장
@@ -349,11 +355,11 @@ class FileProvider {
                             }
 
                             //
-                            Logger.debug(`업로드 파일 완료: ${fullPath}`)
+                            Logger.debug(Logger.l('file.upload.success', fullPath))
                         }
 
                     } catch (e) {
-                        Logger.error(`업로드 실패: ${fullPath} / ${e.message}`)
+                        Logger.error(Logger.l('common.upload.fail', fullPath, e.message))
                     }
                     //
                     this.refresh()
@@ -361,7 +367,7 @@ class FileProvider {
                 }
             })
         } catch (e) {
-            Logger.error(`파일생성 실패: ${e.message}`, e)
+            Logger.error(e.message, e)
         }
     }
 
@@ -397,7 +403,7 @@ class FileProvider {
             //     ]
             // }
 
-            Logger.debug(`폴더조회 성공: ${dir}`)
+            Logger.debug(Logger.l('common.list.success', dir))
             //
             return list.sort((a, b) => {
                 if (a.type === 2 && b.type !== 2) return -1
@@ -429,7 +435,7 @@ class FileProvider {
                 return item
             })
         } catch (e) {
-            Logger.error(`폴더조회 실패: ${e.message}`, e)
+            Logger.error(Logger.l('common.list.fail', e.message), e)
             return []
         }
     }
@@ -444,7 +450,7 @@ class FileProvider {
     // 읽기모드 체크 및 예외처리
     readOnly() {
         if (this.isReadOnly) {
-            throw new Error('읽기모드에서는 지원하지 않습니다.')
+            throw new Error(Logger.l('common.readonly'))
         }
     }
 

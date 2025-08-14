@@ -59,7 +59,7 @@ class ServerProvider {
                 servers.push(message.value)
 
                 await config.update('servers', servers, vscode.ConfigurationTarget.Global)
-                Logger.debug(`서버추가 성공: ${message.value.name}`)
+                Logger.debug(Logger.l('server.add.success', message.value.name))
                 this.refresh()
                 panel.dispose()
             }
@@ -68,15 +68,19 @@ class ServerProvider {
 
     // 서버 삭제
     async removeServer(node) {
-        const confirm = await vscode.window.showWarningMessage(`서버 '${node.label}'를 삭제할까요?`, '삭제', '취소')
-        if (confirm === '삭제') {
+        const confirm = await vscode.window.showWarningMessage(
+            Logger.l('server.delete.confirm', node.label),
+            { modal: true },
+            Logger.l('common.btn.delete'),
+        )
+        if (confirm === Logger.l('common.btn.delete')) {
             const config = vscode.workspace.getConfiguration('ZenFTP')
             let servers = config.get('servers') || []
             servers = servers.filter(s => s.name !== node.label)
 
             //
             await config.update('servers', servers, vscode.ConfigurationTarget.Global);
-            Logger.debug(`서버삭제 성공: ${node.label}`)
+            Logger.debug(Logger.l('server.delete.success', node.label))
             this.refresh()
         }
     }
@@ -87,7 +91,7 @@ class ServerProvider {
         let servers = config.get('servers') || []
         const current = servers.find(s => s.name === node.label)
         if (!current) {
-            Logger.error(`서버 '${node.label}' 설정을 찾을 수 없습니다.`);
+            Logger.error(Logger.l('server.select.edit', node.label));
             return
         }
 
@@ -121,7 +125,7 @@ class ServerProvider {
 
                 servers = servers.map(s => s.name === node.label ? message.value : s)
                 await config.update('servers', servers, vscode.ConfigurationTarget.Global)
-                Logger.debug(`서버수정 성공: ${message.value.name}`)
+                Logger.debug(Logger.l('server.edit.success', message.value.name))
                 this.refresh()
                 panel.dispose()
             }

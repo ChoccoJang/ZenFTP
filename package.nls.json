@@ -1,0 +1,22 @@
+{
+    "view.server": "Servers",
+    "view.files": "File",
+
+    "command.addServer": "Add Server",
+    "command.editServer": "Edit Server",
+    "command.deleteServer": "Delete Server",
+    "command.connectServer": "Connect to Server",
+    "command.disconnectServer": "Disconnect from Server",
+    "command.refreshServers": "Refresh Server List",
+
+    "command.addFolder": "Create Folder",
+    "command.addFile": "Create File",
+    "command.openFile": "Open File",
+    "command.renameFile": "Rename File",
+    "command.deleteFile": "Delete File",
+    "command.uploadFile": "Upload Files or Folders",
+    "command.refreshFiles": "Refresh Files and Folders",
+
+    "setting.logLevel": "ZenFTP logLevel",
+    "setting.servers": "ZenFTP Server List"
+}

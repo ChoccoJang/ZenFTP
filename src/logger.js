@@ -1,7 +1,7 @@
-// logger
-
 const vscode = require('vscode')
+const i18n = require('./i18n')
 
+// logger
 class Logger {
 
     constructor() {
@@ -39,6 +39,14 @@ class Logger {
         const message = `[ERROR] ${args.join(' ')}`
         this.output.appendLine(message)
         vscode.window.showErrorMessage(message)
+    }
+
+    l(key, ...args) {
+        const lang = vscode.env.language.toLowerCase()
+        const message = i18n[key]
+        const template = (lang === 'ko' && message?.ko) || message?.en || key
+
+        return args.reduce((text, val, i) => text.replace(new RegExp(`\\{${i}\\}`, 'g'), val), template)
     }
 }
 
