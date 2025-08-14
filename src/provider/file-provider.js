@@ -75,34 +75,41 @@ class FileProvider {
     // 서버 연결
     async connect(serverNode) {
 
-        // 기존 연결 해제
-        await this.disconnectServer(this.currentServer)
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Window ,
+            title: `Connecting to ${serverNode.label}...`,
+            cancellable: false,
+        }, async (progress) => {
 
-        //
-        this.init(serverNode)
+            // 기존 연결 해제
+            await this.disconnectServer(this.currentServer)
 
-        try {
-            if (this.protocol === 'sftp') {
-                this.client = new SftpClient()
-                await this.client.connect(serverNode.config)
-            } else if (this.protocol === 'ftp') {
-                this.client = new FtpClient.Client()
-                await this.client.access({
-                    host: serverNode.config.host,
-                    port: serverNode.config.port || 21,
-                    user: serverNode.config.username,
-                    password: serverNode.config.password,
-                    secure: false,
-                })
-            }
-            this.connected = true
-            await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', true)
-            Logger.debug(`서버연결 성공: ${serverNode.label}`)
             //
-            this.refresh()
-        } catch (e) {
-            Logger.error(`서버연결 실패: ${e.message}`, e)
-        }
+            this.init(serverNode)
+
+            try {
+                if (this.protocol === 'sftp') {
+                    this.client = new SftpClient()
+                    await this.client.connect(serverNode.config)
+                } else if (this.protocol === 'ftp') {
+                    this.client = new FtpClient.Client()
+                    await this.client.access({
+                        host: serverNode.config.host,
+                        port: serverNode.config.port || 21,
+                        user: serverNode.config.username,
+                        password: serverNode.config.password,
+                        secure: false,
+                    })
+                }
+                this.connected = true
+                await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', true)
+                Logger.debug(`서버연결 성공: ${serverNode.label}`)
+                //
+                this.refresh()
+            } catch (e) {
+                Logger.error(`서버연결 실패: ${e.message}`, e)
+            }
+        })
     }
 
     // 서버 연결 종료
@@ -373,7 +380,9 @@ class FileProvider {
         const dir = element?.fullPath || this.currentPath
 
         try {
-            await this.client.cd(dir)
+            if (this.protocol === 'ftp') {
+                await this.client.cd(dir)
+            }
             const list = await this.client.list(dir)
 
             // 하나도 없을 경우
