@@ -77,7 +77,7 @@ class FileProvider {
 
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window ,
-            title: `Connecting to ${serverNode.label}...`,
+            title: Logger.l('server.connect.connecting', serverNode.label),
             cancellable: false,
         }, async (progress) => {
 
@@ -109,7 +109,8 @@ class FileProvider {
             } catch (e) {
                 Logger.error(Logger.l('server.connect.fail', e.message), e)
             }
-    })
+        })
+    }
 
     // 서버 연결 종료
     async disconnectServer(serverNode) {
