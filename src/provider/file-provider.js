@@ -60,7 +60,6 @@ class FileProvider {
             const tempFileName = doc.fileName
 
             fs.unlink(tempFileName, () => {})
-            if (!this.isReadOnly && this.saveDisposable) this.saveDisposable.dispose()
             closeDisposable.dispose()
             // 임시<->실제 파일명 저장
             this.tempFileMap.delete(tempFileName)
@@ -124,6 +123,10 @@ class FileProvider {
                 this.client = null
                 this.currentPath = null
                 this.tempFileMap.clear()
+                if (!this.isReadOnly && this.saveDisposable) {
+                    this.saveDisposable.dispose()
+                    this.saveDisposable = null
+                }
                 await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', false)
                 //
                 this.refresh()
@@ -149,11 +152,12 @@ class FileProvider {
                 await this.client.downloadTo(stream, fullPath)
             }
 
+            // 임시<->실제 파일명 저장
+            this.tempFileMap.set(tempFiileName, fullPath)
+
             // doc open
             const doc = await vscode.workspace.openTextDocument(tempFiileName)
             await vscode.window.showTextDocument(doc)
-            // 임시<->실제 파일명 저장
-            this.tempFileMap.set(tempFiileName, fullPath)
             Logger.debug(Logger.l('file.open.success', fullPath))
         } catch (e) {
             Logger.error(Logger.l('file.open.fail', e.message), e)
@@ -241,6 +245,18 @@ class FileProvider {
             // 파일인지 폴더인지 체크
             const i18nFix = node.isDirectory ? 'folder' : 'file'
 
+            // 검색한 임시파일명
+            const matchedTempFileNameList = []
+
+            // -- 파일일 경우 > 원격 파일명으로 검색 1개라도 있으면
+            if (!node.isDirectory) {
+                for (const [tempFileName, remoteFileName] of this.tempFileMap.entries()) {
+                    if (remoteFileName === node.fullPath) {
+                        matchedTempFileNameList.push(tempFileName)
+                    }
+                }
+            }
+
             const newName = await vscode.window.showInputBox({ prompt: Logger.l(`${i18nFix}.rename.newName`), value: node.label })
             if (!newName || newName === node.label) return
 
@@ -254,6 +270,13 @@ class FileProvider {
 
             if (this.protocol === 'sftp') await this.client.rename(node.fullPath, newPath)
             else if (this.protocol === 'ftp') await this.client.rename(node.fullPath, newPath)
+
+            // tempFileMap 업데이트
+            if (matchedTempFileNameList.length > 0) {
+                for (const matchedTempFileName of matchedTempFileNameList) {
+                    this.tempFileMap.set(matchedTempFileName, newPath)
+                }
+            }
             //
             Logger.debug(Logger.l(`${i18nFix}.rename.success`, newName))
             this.refresh()
@@ -442,10 +465,10 @@ class FileProvider {
 
     // 임시파일
     getHashFileName(fileName) {
+        const random = String(Math.round(Math.random() * 100000000))
         const orgFileName = path.basename(fileName)
-        const hashFileName = crypto.createHash('md5').update(fileName + Date.now()).digest('hex') + path.extname(fileName)
-        // return `${orgFileName}______${hashFileName}`
-        return `${hashFileName}`
+        const hashFileName = crypto.createHash('md5').update(fileName + Date.now() + random).digest('hex') + path.extname(fileName)
+        return `${orgFileName}______${hashFileName}`
     }
 
     // 읽기모드 체크 및 예외처리
