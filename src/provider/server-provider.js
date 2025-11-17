@@ -4,6 +4,36 @@ const vscode = require('vscode')
 
 const Logger = require('../logger')
 
+// 서버 그룹
+class ServerGroupItem extends vscode.TreeItem {
+    constructor(label) {
+        super(label, vscode.TreeItemCollapsibleState.Expanded)
+
+        this.contextValue = "serverGroup"
+        this.iconPath = new vscode.ThemeIcon("folder")
+    }
+}
+
+// 서버 정보
+class ServerItem extends vscode.TreeItem {
+    constructor(server) {
+        super(server.name, vscode.TreeItemCollapsibleState.None);
+
+        this.config = server
+        this.label = server.name
+        this.iconPath = new vscode.ThemeIcon('globe')
+        this.description = `${server.host}:${server.port || 21}`
+        this.server = server
+        this.contextValue = "server"
+        this.command = {
+            command: 'ZenFTP.connectServer',
+            title: 'Connect to Server',
+            arguments: [{ label: server.name, config: server }]
+        }
+    }
+}
+
+
 // 서버 view 프로바이저
 class ServerProvider {
 
@@ -11,6 +41,11 @@ class ServerProvider {
         this.eventEmitter = new vscode.EventEmitter()
         this.onDidChangeTreeData = this.eventEmitter.event
         this.servers = this.loadServerConfigs()
+    }
+
+    getServerGroup(server) {
+        const defaultGroupName = Logger.l('common.server.group.default.name')
+        return server.group || defaultGroupName
     }
 
     // 서버 설정 로드
@@ -33,7 +68,7 @@ class ServerProvider {
     async addServer(context) {
 
         // 패널 생성
-        const panel = vscode.window.createWebviewPanel('ZenFTPAddServer', 'ZenFTP Add Server', vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel('ZenFTPAddServer', Logger.l('server.add.title'), vscode.ViewColumn.One, {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'resources'))],
@@ -76,7 +111,7 @@ class ServerProvider {
         if (confirm === Logger.l('common.btn.delete')) {
             const config = vscode.workspace.getConfiguration('ZenFTP')
             let servers = config.get('servers') || []
-            servers = servers.filter(s => s.name !== node.label)
+            servers = servers.filter(s => !(s.name === node.label && this.getServerGroup(s) === this.getServerGroup(node.server)))
 
             //
             await config.update('servers', servers, vscode.ConfigurationTarget.Global);
@@ -89,14 +124,14 @@ class ServerProvider {
     async editServer(context, node) {
         const config = vscode.workspace.getConfiguration('ZenFTP')
         let servers = config.get('servers') || []
-        const current = servers.find(s => s.name === node.label)
+        const current = servers.find(s => s.name === node.label && this.getServerGroup(s) === this.getServerGroup(node.server))
         if (!current) {
             Logger.error(Logger.l('server.select.edit', node.label));
             return
         }
 
         // 패널 생성
-        const panel = vscode.window.createWebviewPanel('ZenFTPAddServer', `ZenFTP Modify Server - ${current.name}`, vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel('ZenFTPAddServer', Logger.l('server.edit.title', current.name), vscode.ViewColumn.One, {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'resources'))],
@@ -123,7 +158,7 @@ class ServerProvider {
                 const config = vscode.workspace.getConfiguration('ZenFTP')
                 let servers = config.get('servers') || []
 
-                servers = servers.map(s => s.name === node.label ? message.value : s)
+                servers = servers.map(s => (s.name === node.label && this.getServerGroup(s) === this.getServerGroup(node.server)) ? message.value : s)
                 await config.update('servers', servers, vscode.ConfigurationTarget.Global)
                 Logger.debug(Logger.l('server.edit.success', message.value.name))
                 this.refresh()
@@ -136,13 +171,11 @@ class ServerProvider {
 
     // 트리 아이템 처리
     getTreeItem(element) {
-        const item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.None);
-        Object.assign(item, element)
-        return item
+        return element
     }
 
     // 트리 리스트 처리
-    getChildren() {
+    getChildren(element) {
         // 서버가 하나도 없을 경우
         // if (this.servers.length === 0) {
         //     return [
@@ -154,21 +187,19 @@ class ServerProvider {
         //     ]
         // }
 
-        //
-        return this.servers.map(server => {
-            return ({
-                label: server.name,
-                description: `${server.host}:${server.port || 21}`,
-                config: server,
-                contextValue: 'server',
-                iconPath: new vscode.ThemeIcon('globe'),
-                command: {
-                    command: 'ZenFTP.connectServer',
-                    title: 'Connect to Server',
-                    arguments: [{ label: server.name, config: server }]
-                }
-            })
-        })
+        // 그룹 리스트
+        if (!element) {
+            const groups = [...new Set(this.servers.map(s => this.getServerGroup(s)))]
+            return groups.map(group => new ServerGroupItem(group))
+        }
+
+        // 해당 그룹 서버 리스트
+        if (element instanceof ServerGroupItem) {
+            const servers = this.servers.filter(s => this.getServerGroup(s) === element.label)
+            return servers.map(s => new ServerItem(s))
+        }
+
+        return []
     }
 }
 
