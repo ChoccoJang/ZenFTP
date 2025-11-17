@@ -43,6 +43,11 @@ class ServerProvider {
         this.servers = this.loadServerConfigs()
     }
 
+    getServerGroup(server) {
+        const defaultGroupName = Logger.l('common.server.group.default.name')
+        return server.group || defaultGroupName
+    }
+
     // 서버 설정 로드
     loadServerConfigs() {
         const config = vscode.workspace.getConfiguration('ZenFTP')
@@ -106,7 +111,7 @@ class ServerProvider {
         if (confirm === Logger.l('common.btn.delete')) {
             const config = vscode.workspace.getConfiguration('ZenFTP')
             let servers = config.get('servers') || []
-            servers = servers.filter(s => s.name !== node.label)
+            servers = servers.filter(s => !(s.name === node.label && this.getServerGroup(s) === this.getServerGroup(node.server)))
 
             //
             await config.update('servers', servers, vscode.ConfigurationTarget.Global);
@@ -119,7 +124,7 @@ class ServerProvider {
     async editServer(context, node) {
         const config = vscode.workspace.getConfiguration('ZenFTP')
         let servers = config.get('servers') || []
-        const current = servers.find(s => s.name === node.label)
+        const current = servers.find(s => s.name === node.label && this.getServerGroup(s) === this.getServerGroup(node.server))
         if (!current) {
             Logger.error(Logger.l('server.select.edit', node.label));
             return
@@ -153,7 +158,7 @@ class ServerProvider {
                 const config = vscode.workspace.getConfiguration('ZenFTP')
                 let servers = config.get('servers') || []
 
-                servers = servers.map(s => s.name === node.label ? message.value : s)
+                servers = servers.map(s => (s.name === node.label && this.getServerGroup(s) === this.getServerGroup(node.server)) ? message.value : s)
                 await config.update('servers', servers, vscode.ConfigurationTarget.Global)
                 Logger.debug(Logger.l('server.edit.success', message.value.name))
                 this.refresh()
@@ -182,18 +187,15 @@ class ServerProvider {
         //     ]
         // }
 
-        // 기본목록명
-        let defaultGroupName = Logger.l('common.server.group.default.name')
-
         // 그룹 리스트
         if (!element) {
-            const groups = [...new Set(this.servers.map(s => s.group || defaultGroupName))]
+            const groups = [...new Set(this.servers.map(s => this.getServerGroup(s)))]
             return groups.map(group => new ServerGroupItem(group))
         }
 
         // 해당 그룹 서버 리스트
         if (element instanceof ServerGroupItem) {
-            const servers = this.servers.filter(s => (s.group || defaultGroupName) === element.label)
+            const servers = this.servers.filter(s => this.getServerGroup(s) === element.label)
             return servers.map(s => new ServerItem(s))
         }
 
