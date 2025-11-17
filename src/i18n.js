@@ -41,6 +41,14 @@ const i18n  = {
         en: 'No server selected to edit.',
         ko: '수정할 서버가 선택되지 않았습니다.',
     },
+    'server.add.title': {
+        en: 'ZenFTP Add Server',
+        ko: 'ZenFTP 서버 추가',
+    },
+    'server.edit.title': {
+        en: 'ZenFTP Modify Server - {0}',
+        ko: 'ZenFTP 서버 수정 - {0}',
+    },
 
     // 파일
     'file.create.newName': {
@@ -178,6 +186,10 @@ const i18n  = {
     'common.btn.delete': {
         en: 'Delete',
         ko: '삭제',
+    },
+    'common.server.group.default.name': {
+        en: 'Default',
+        ko: '기본',
     },
 }
 

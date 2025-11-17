@@ -153,6 +153,9 @@
     <div class="card">
         <div class="title"><img src="${logoUri}" width="100" alt="ZenFTP" /> ZenFTP</div>
         <form id="serverForm">
+            <label>Server Group</label>
+            <input id="groupName" name="groupName" placeholder="DEV" />
+
             <label>Server Name</label>
             <input id="name" name="name" placeholder="Dev Server" required />
 
@@ -200,6 +203,7 @@
             e.preventDefault()
             const form = e.target;
             const data = {
+                group: form.groupName.value,
                 name: form.name.value,
                 host: form.host.value,
                 port: Number(form.port.value),

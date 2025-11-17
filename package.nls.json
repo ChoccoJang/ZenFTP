@@ -18,5 +18,6 @@
     "command.refreshFiles": "Refresh Files and Folders",
 
     "setting.logLevel": "ZenFTP logLevel",
-    "setting.servers": "ZenFTP Server List"
+    "setting.servers": "ZenFTP Server List",
+    "wellcomeMessage": "Welcome to ZenFTP!\nIt looks like you haven't added any servers yet.\nClick below to set up your first remote connection.\n[Add a Server](command:ZenFTP.addServer)\nNeed help or want to contribute? Check out our [GitHub](https://github.com/ChoccoJang/ZenFTP)."
 }

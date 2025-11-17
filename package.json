@@ -1,8 +1,8 @@
 {
-    "name": "ZenFTP",
+    "name": "zen-ftp",
     "displayName": "ZenFTP",
     "description": "Remote file editor for FTP/SFTP in VS Code.",
-    "version": "1.0.5",
+    "version": "1.1.1",
     "license": "MIT",
     "publisher": "ChoccoJang",
     "pricing": "Free",
@@ -32,17 +32,11 @@
     "homepage": "https://github.com/ChoccoJang/ZenFTP#readme",
     "main": "src/app.js",
     "icon": "resources/icon.png",
-    "activationEvents": [
-        "onView:ZenFTPFiles",
-        "onView:ZenFTPServers",
-        "onCommand:ZenFTP.rename",
-        "onCommand:ZenFTP.delete"
-    ],
     "contributes": {
         "viewsWelcome": [
             {
                 "view": "ZenFTPServers",
-                "contents": "Welcome to ZenFTP!\nIt looks like you haven't added any servers yet.\nClick below to set up your first remote connection.\n[Add a Server](command:ZenFTP.addServer)\nNeed help or want to contribute? Check out our [GitHub](https://github.com/ChoccoJang/ZenFTP).",
+                "contents": "%wellcomeMessage%",
                 "when": "ZenFTP.hasNoServers"
             }
         ],

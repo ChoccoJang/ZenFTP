@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <title>ZenFTP 서버 추가</title>
+    <title>ZenFTP 서버 수정</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         :root {
@@ -153,6 +153,9 @@
     <div class="card">
         <div class="title"><img src="${logoUri}" width="100" alt="ZenFTP" /> ZenFTP</div>
         <form id="serverForm">
+            <label>Server Group</label>
+            <input id="groupName" name="groupName" placeholder="DEV" />
+
             <label>Server Name</label>
             <input id="name" name="name" placeholder="Dev Server" required />
 
@@ -206,6 +209,7 @@
         if (message.type === 'init' && message.value) {
             const server = message.value
             // --
+            document.querySelector('#groupName').value = server.group ?? ''
             document.querySelector('#name').value = server.name
             document.querySelector('#host').value = server.host
             document.querySelector('#port').value = server.port
@@ -221,6 +225,7 @@
             e.preventDefault()
             const form = e.target;
             const data = {
+                group: form.groupName.value,
                 name: form.name.value,
                 host: form.host.value,
                 port: Number(form.port.value),
