@@ -32,6 +32,12 @@
     "homepage": "https://github.com/ChoccoJang/ZenFTP#readme",
     "main": "src/app.js",
     "icon": "resources/icon.png",
+    "activationEvents": [
+        "onView:ZenFTPFiles",
+        "onView:ZenFTPServers",
+        "onCommand:ZenFTP.rename",
+        "onCommand:ZenFTP.delete"
+    ],
     "contributes": {
         "viewsWelcome": [
             {
