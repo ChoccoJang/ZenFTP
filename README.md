@@ -59,7 +59,7 @@ Set `ZenFTP.logLevel` to `DEBUG` when you need verbose logs in the ZenFTP output
 
 ### 📄 License
 
-[MIT](?tab=readme-ov-file)
+[MIT](LICENSE)
 
 ## 한국어
 
@@ -117,4 +117,4 @@ VS Code `settings.json`에서 직접 서버 목록을 관리할 수 있습니다
 
 ### 📄 라이센스
 
-[MIT](?tab=readme-ov-file)
+[MIT](LICENSE)
