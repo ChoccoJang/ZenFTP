@@ -220,9 +220,9 @@ class FileProvider {
             this.context.workspaceState.update('zenftp.tempFileMap', tempFileMapObj)
             
             // 현재 서버 정보 저장
-            // Note: Credentials are stored in workspace state. The original code already
-            // stores them in VSCode settings (see package.json ZenFTP.servers configuration).
-            // For better security, consider using VSCode's SecretStorage API in the future.
+            // 참고: 자격 증명은 워크스페이스 상태에 저장됩니다. 기존 코드에서도
+            // VSCode 설정에 저장하고 있습니다 (package.json의 ZenFTP.servers 참조).
+            // 보안 강화를 위해 향후 VSCode의 SecretStorage API 사용을 고려하세요.
             if (this.currentServer) {
                 this.context.workspaceState.update('zenftp.currentServer', {
                     config: this.currentServer.config,
