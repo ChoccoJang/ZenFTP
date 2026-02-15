@@ -178,7 +178,7 @@ class FileProvider {
     // 재연결
     async reconnect() {
         if (!this.currentServer) {
-            Logger.error('No server information available for reconnection')
+            Logger.error(Logger.l('common.reconnect.noserver'))
             return
         }
 
@@ -220,6 +220,9 @@ class FileProvider {
             this.context.workspaceState.update('zenftp.tempFileMap', tempFileMapObj)
             
             // 현재 서버 정보 저장
+            // Note: Credentials are stored in workspace state. The original code already
+            // stores them in VSCode settings (see package.json ZenFTP.servers configuration).
+            // For better security, consider using VSCode's SecretStorage API in the future.
             if (this.currentServer) {
                 this.context.workspaceState.update('zenftp.currentServer', {
                     config: this.currentServer.config,
@@ -227,7 +230,7 @@ class FileProvider {
                 })
             }
         } catch (e) {
-            Logger.error('Failed to save state: ' + e.message, e)
+            Logger.error(Logger.l('common.state.save.fail', e.message), e)
         }
     }
 
@@ -251,9 +254,9 @@ class FileProvider {
                 this.isReadOnly = savedServer.config.readOnly === true
             }
 
-            Logger.debug('State restored successfully')
+            Logger.debug(Logger.l('common.state.restore.success'))
         } catch (e) {
-            Logger.error('Failed to restore state: ' + e.message, e)
+            Logger.error(Logger.l('common.state.restore.fail', e.message), e)
         }
     }
 
@@ -264,19 +267,19 @@ class FileProvider {
         // 임시파일
         const fullPath = node.fullPath
         const hashFileName = this.getHashFileName(fullPath)
-        const tempFiileName = path.join(os.tmpdir(), hashFileName)
+        const tempFileName = path.join(os.tmpdir(), hashFileName)
         try {
-            if (this.protocol === 'sftp') await this.client.fastGet(fullPath, tempFiileName)
+            if (this.protocol === 'sftp') await this.client.fastGet(fullPath, tempFileName)
             else if (this.protocol === 'ftp') {
-                const stream = fs.createWriteStream(tempFiileName)
+                const stream = fs.createWriteStream(tempFileName)
                 await this.client.downloadTo(stream, fullPath)
             }
 
             // 임시<->실제 파일명 저장
-            this.tempFileMap.set(tempFiileName, fullPath)
+            this.tempFileMap.set(tempFileName, fullPath)
 
             // doc open
-            const doc = await vscode.workspace.openTextDocument(tempFiileName)
+            const doc = await vscode.workspace.openTextDocument(tempFileName)
             await vscode.window.showTextDocument(doc)
             Logger.debug(Logger.l('file.open.success', fullPath))
             

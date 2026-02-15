@@ -199,6 +199,22 @@ const i18n  = {
         en: 'Read-only mode. Operation not allowed.',
         ko: '읽기전용 모드입니다. 작업이 허용되지 않습니다.',
     },
+    'common.state.save.fail': {
+        en: 'Failed to save state: {0}',
+        ko: '상태 저장 실패: {0}',
+    },
+    'common.state.restore.success': {
+        en: 'State restored successfully',
+        ko: '상태 복원 완료',
+    },
+    'common.state.restore.fail': {
+        en: 'Failed to restore state: {0}',
+        ko: '상태 복원 실패: {0}',
+    },
+    'common.reconnect.noserver': {
+        en: 'No server information available for reconnection',
+        ko: '재연결을 위한 서버 정보가 없습니다',
+    },
     'common.btn.delete': {
         en: 'Delete',
         ko: '삭제',
