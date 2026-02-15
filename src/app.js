@@ -12,7 +12,7 @@ function activate(context) {
 
     //
     const serverProvider = new ServerProvider()
-    const fileProvider = new FileProvider()
+    const fileProvider = new FileProvider(context)
 
     // treeview 생성
     const serverTreeView = vscode.window.createTreeView('ZenFTPServers', { treeDataProvider: serverProvider })

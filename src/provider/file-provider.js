@@ -12,7 +12,7 @@ const LowerMap = require('../lower-map')
 // 파일 view 프로바이저
 class FileProvider {
 
-    constructor() {
+    constructor(context) {
         this.eventEmitter = new vscode.EventEmitter()
         this.onDidChangeTreeData = this.eventEmitter.event
         this.client = null
@@ -23,6 +23,10 @@ class FileProvider {
         this.connected = false
         this.isReadOnly = false
         this.tempFileMap = new LowerMap()
+        this.context = context
+        
+        // 워크스페이스 상태 복원
+        this.restoreState()
     }
 
     // 초기화
@@ -42,7 +46,22 @@ class FileProvider {
                 const tempFileName = doc.fileName
                 const realFileName = this.tempFileMap.get(tempFileName)
 
+                // FTP로 열린 파일이 아니면 무시
+                if (!realFileName) {
+                    return
+                }
+
                 try {
+                    // 연결되지 않은 경우 자동 재연결 시도
+                    if (!this.connected || !this.client) {
+                        Logger.debug(Logger.l('server.reconnect.attempt', this.currentServer?.label || 'server'))
+                        await this.reconnect()
+                        if (!this.connected) {
+                            Logger.error(Logger.l('file.save.fail', 'Not connected to server'))
+                            return
+                        }
+                    }
+
                     if (this.protocol === 'sftp') await this.client.fastPut(tempFileName, realFileName)
                     else if (this.protocol === 'ftp') {
                         const stream = fs.createReadStream(tempFileName)
@@ -63,7 +82,12 @@ class FileProvider {
             closeDisposable.dispose()
             // 임시<->실제 파일명 저장
             this.tempFileMap.delete(tempFileName)
+            // 상태 저장
+            this.saveState()
         })
+        
+        // 상태 저장
+        this.saveState()
     }
 
     // 새로고침
@@ -130,10 +154,94 @@ class FileProvider {
                 await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', false)
                 //
                 this.refresh()
+                // 상태 저장
+                this.saveState()
                 Logger.debug(Logger.l('server.disconnect.success', serverNode.label))
             }
         } catch (e) {
             Logger.error(Logger.l('server.disconnect.fail', e.message), e)
+        }
+    }
+
+    // 재연결
+    async reconnect() {
+        if (!this.currentServer) {
+            Logger.error('No server information available for reconnection')
+            return
+        }
+
+        try {
+            if (this.protocol === 'sftp') {
+                this.client = new SftpClient()
+                await this.client.connect(this.currentServer.config)
+            } else if (this.protocol === 'ftp') {
+                this.client = new FtpClient.Client()
+                await this.client.access({
+                    host: this.currentServer.config.host,
+                    port: this.currentServer.config.port || 21,
+                    user: this.currentServer.config.username,
+                    password: this.currentServer.config.password,
+                    secure: false,
+                })
+            }
+            this.connected = true
+            await vscode.commands.executeCommand('setContext', 'ZenFTP.connected', true)
+            Logger.debug(Logger.l('server.reconnect.success', this.currentServer.label))
+        } catch (e) {
+            this.connected = false
+            Logger.error(Logger.l('server.reconnect.fail', e.message), e)
+        }
+    }
+
+    // 상태 저장
+    saveState() {
+        if (!this.context) return
+
+        try {
+            // tempFileMap을 일반 객체로 변환
+            const tempFileMapObj = {}
+            for (const [key, value] of this.tempFileMap.entries()) {
+                tempFileMapObj[key] = value
+            }
+
+            // 워크스페이스 상태에 저장
+            this.context.workspaceState.update('zenftp.tempFileMap', tempFileMapObj)
+            
+            // 현재 서버 정보 저장
+            if (this.currentServer) {
+                this.context.workspaceState.update('zenftp.currentServer', {
+                    config: this.currentServer.config,
+                    label: this.currentServer.label
+                })
+            }
+        } catch (e) {
+            Logger.error('Failed to save state: ' + e.message, e)
+        }
+    }
+
+    // 상태 복원
+    restoreState() {
+        if (!this.context) return
+
+        try {
+            // tempFileMap 복원
+            const tempFileMapObj = this.context.workspaceState.get('zenftp.tempFileMap', {})
+            for (const [key, value] of Object.entries(tempFileMapObj)) {
+                this.tempFileMap.set(key, value)
+            }
+
+            // 현재 서버 정보 복원
+            const savedServer = this.context.workspaceState.get('zenftp.currentServer')
+            if (savedServer) {
+                this.currentServer = savedServer
+                this.protocol = savedServer.config.protocol || 'sftp'
+                this.currentPath = savedServer.config.rootPath || '/'
+                this.isReadOnly = savedServer.config.readOnly === true
+            }
+
+            Logger.debug('State restored successfully')
+        } catch (e) {
+            Logger.error('Failed to restore state: ' + e.message, e)
         }
     }
 
@@ -159,6 +267,9 @@ class FileProvider {
             const doc = await vscode.workspace.openTextDocument(tempFiileName)
             await vscode.window.showTextDocument(doc)
             Logger.debug(Logger.l('file.open.success', fullPath))
+            
+            // 상태 저장
+            this.saveState()
         } catch (e) {
             Logger.error(Logger.l('file.open.fail', e.message), e)
         }
@@ -224,6 +335,8 @@ class FileProvider {
             await vscode.window.showTextDocument(doc, { preview: false })
             //
             Logger.debug(Logger.l('file.create.success', name))
+            // 상태 저장
+            this.saveState()
             this.refresh()
         } catch (e) {
             Logger.error(Logger.l('file.create.fail', e.message), e)
@@ -279,6 +392,8 @@ class FileProvider {
             }
             //
             Logger.debug(Logger.l(`${i18nFix}.rename.success`, newName))
+            // 상태 저장
+            this.saveState()
             this.refresh()
         } catch (e) {
             Logger.error(Logger.l(`${i18nFix}.rename.fail`, e.message), e)

@@ -37,6 +37,18 @@ const i18n  = {
         en: 'Failed to disconnect: {0}',
         ko: '서버 연결종료 실패: {0}',
     },
+    'server.reconnect.attempt': {
+        en: 'Attempting to reconnect to: {0}',
+        ko: '서버 재연결 시도 중: {0}',
+    },
+    'server.reconnect.success': {
+        en: 'Reconnected to server: {0}',
+        ko: '서버 재연결 성공: {0}',
+    },
+    'server.reconnect.fail': {
+        en: 'Failed to reconnect: {0}',
+        ko: '서버 재연결 실패: {0}',
+    },
     'server.select.edit': {
         en: 'No server selected to edit.',
         ko: '수정할 서버가 선택되지 않았습니다.',
@@ -178,6 +190,10 @@ const i18n  = {
     'common.upload.fail': {
         en: 'Upload failed: {0}',
         ko: '업로드 실패: {0}',
+    },
+    'name.exists': {
+        en: 'Name already exists: {0}',
+        ko: '이미 존재하는 이름입니다: {0}',
     },
     'common.readonly': {
         en: 'Read-only mode. Operation not allowed.',
