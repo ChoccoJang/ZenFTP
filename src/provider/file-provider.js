@@ -27,6 +27,11 @@ class FileProvider {
         
         // 워크스페이스 상태 복원
         this.restoreState()
+        
+        // 저장된 상태가 있고 읽기전용이 아니면 저장 핸들러 설정
+        if (this.currentServer && !this.isReadOnly) {
+            this.setupSaveHandler()
+        }
     }
 
     // 초기화
@@ -40,41 +45,51 @@ class FileProvider {
 
         // 읽기전용이 아니면 저장 이벤트 트리거 설정
         if (!this.isReadOnly) {
-            // 저장 이벤트
-            if (this.saveDisposable) this.saveDisposable.dispose()
-            this.saveDisposable = await vscode.workspace.onDidSaveTextDocument(async (doc) => {
-                const tempFileName = doc.fileName
-                const realFileName = this.tempFileMap.get(tempFileName)
-
-                // FTP로 열린 파일이 아니면 무시
-                if (!realFileName) {
-                    return
-                }
-
-                try {
-                    // 연결되지 않은 경우 자동 재연결 시도
-                    if (!this.connected || !this.client) {
-                        Logger.debug(Logger.l('server.reconnect.attempt', this.currentServer?.label || 'server'))
-                        await this.reconnect()
-                        if (!this.connected) {
-                            Logger.error(Logger.l('file.save.fail', 'Not connected to server'))
-                            return
-                        }
-                    }
-
-                    if (this.protocol === 'sftp') await this.client.fastPut(tempFileName, realFileName)
-                    else if (this.protocol === 'ftp') {
-                        const stream = fs.createReadStream(tempFileName)
-                        await this.client.uploadFrom(stream, realFileName)
-                        stream.close()
-                    }
-                    Logger.debug(Logger.l('file.save.success', realFileName))
-                } catch (e) {
-                    Logger.error(Logger.l('file.save.fail', e.message), e)
-                }
-            })
+            this.setupSaveHandler()
         }
-        // 파일 닫으면 임시파일 제거 및 saveDisposable 제거
+        
+        // 상태 저장
+        this.saveState()
+    }
+
+    // 저장 핸들러 설정
+    setupSaveHandler() {
+        // 기존 핸들러가 있으면 제거
+        if (this.saveDisposable) this.saveDisposable.dispose()
+        
+        this.saveDisposable = vscode.workspace.onDidSaveTextDocument(async (doc) => {
+            const tempFileName = doc.fileName
+            const realFileName = this.tempFileMap.get(tempFileName)
+
+            // FTP로 열린 파일이 아니면 무시
+            if (!realFileName) {
+                return
+            }
+
+            try {
+                // 연결되지 않은 경우 자동 재연결 시도
+                if (!this.connected || !this.client) {
+                    Logger.debug(Logger.l('server.reconnect.attempt', this.currentServer?.label || 'server'))
+                    await this.reconnect()
+                    if (!this.connected) {
+                        Logger.error(Logger.l('file.save.fail', 'Not connected to server'))
+                        return
+                    }
+                }
+
+                if (this.protocol === 'sftp') await this.client.fastPut(tempFileName, realFileName)
+                else if (this.protocol === 'ftp') {
+                    const stream = fs.createReadStream(tempFileName)
+                    await this.client.uploadFrom(stream, realFileName)
+                    stream.close()
+                }
+                Logger.debug(Logger.l('file.save.success', realFileName))
+            } catch (e) {
+                Logger.error(Logger.l('file.save.fail', e.message), e)
+            }
+        })
+        
+        // 파일 닫으면 임시파일 제거
         const closeDisposable = vscode.workspace.onDidCloseTextDocument((doc) => {
             const tempFileName = doc.fileName
 
@@ -85,9 +100,6 @@ class FileProvider {
             // 상태 저장
             this.saveState()
         })
-        
-        // 상태 저장
-        this.saveState()
     }
 
     // 새로고침
