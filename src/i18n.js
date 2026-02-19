@@ -91,6 +91,10 @@ const i18n  = {
         en: 'File save failed: {0}',
         ko: '파일 저장 실패: {0}',
     },
+    'file.save.notConnected': {
+        en: 'Cannot save because the server is not connected.',
+        ko: '서버에 연결되지 않아 저장할 수 없습니다.',
+    },
     'file.upload.success': {
         en: 'Upload completed: {0}',
         ko: '파일 업로드 완료: {0}',
