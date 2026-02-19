@@ -37,6 +37,18 @@ const i18n  = {
         en: 'Failed to disconnect: {0}',
         ko: '서버 연결종료 실패: {0}',
     },
+    'server.reconnect.attempt': {
+        en: 'Attempting to reconnect to: {0}',
+        ko: '서버 재연결 시도 중: {0}',
+    },
+    'server.reconnect.success': {
+        en: 'Reconnected to server: {0}',
+        ko: '서버 재연결 성공: {0}',
+    },
+    'server.reconnect.fail': {
+        en: 'Failed to reconnect: {0}',
+        ko: '서버 재연결 실패: {0}',
+    },
     'server.select.edit': {
         en: 'No server selected to edit.',
         ko: '수정할 서버가 선택되지 않았습니다.',
@@ -78,6 +90,10 @@ const i18n  = {
     'file.save.fail': {
         en: 'File save failed: {0}',
         ko: '파일 저장 실패: {0}',
+    },
+    'file.save.notConnected': {
+        en: 'Cannot save because the server is not connected.',
+        ko: '서버에 연결되지 않아 저장할 수 없습니다.',
     },
     'file.upload.success': {
         en: 'Upload completed: {0}',
@@ -179,9 +195,29 @@ const i18n  = {
         en: 'Upload failed: {0}',
         ko: '업로드 실패: {0}',
     },
+    'name.exists': {
+        en: 'Name already exists: {0}',
+        ko: '이미 존재하는 이름입니다: {0}',
+    },
     'common.readonly': {
         en: 'Read-only mode. Operation not allowed.',
         ko: '읽기전용 모드입니다. 작업이 허용되지 않습니다.',
+    },
+    'common.state.save.fail': {
+        en: 'Failed to save state: {0}',
+        ko: '상태 저장 실패: {0}',
+    },
+    'common.state.restore.success': {
+        en: 'State restored successfully',
+        ko: '상태 복원 완료',
+    },
+    'common.state.restore.fail': {
+        en: 'Failed to restore state: {0}',
+        ko: '상태 복원 실패: {0}',
+    },
+    'common.reconnect.noserver': {
+        en: 'No server information available for reconnection',
+        ko: '재연결을 위한 서버 정보가 없습니다',
     },
     'common.btn.delete': {
         en: 'Delete',
